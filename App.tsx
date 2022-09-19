@@ -1,20 +1,45 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar, View } from 'react-native';
+import { Background } from './src/components/Background/index';
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_900Black
+} from '@expo-google-fonts/inter';
 
-export default function App() {
+import { Routes } from './src/routes';
+import { Loading } from './src/components/Loading';
+import './src/services/notificationConfigs';
+import {getPushNotificationToken } from './src/services/getPushNotificationToken'
+import { useRef, useEffect } from 'react';
+import { Subscription } from 'expo-modules-core';
+ 
+
+function App() { 
+  const getNotificationListener = useRef<Subscription>()
+  const responseNotificationListener = useRef<Subscription>()
+
+  useEffect(() => {
+    getPushNotificationToken();
+  })
+
+  const [ fontsLoaded ] = useFonts({
+    Inter_400Regular,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_900Black
+  });
+  
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Background>
+      <StatusBar 
+        barStyle={"light-content"}
+        backgroundColor={'transparent'}
+        translucent
+      />
+      {fontsLoaded ? <Routes/> : <Loading /> }
+    </Background>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
