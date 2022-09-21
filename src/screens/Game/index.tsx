@@ -17,25 +17,26 @@ import axios from 'axios';
 export function Game () {
   const route = useRoute();
   const [duos , setDuos] = useState<DuoCardProps[]>([]);
-  const [discordSelected , setDiscordSelected] = useState("")
+  const [discordSelected , setDiscordSelected] = useState<string>('')
   const game = route.params as GameParams;
   const navigation = useNavigation();
   const handleGoBack = () => navigation.goBack();
   
-  const gameList = async() => {
-    await axios(API_URL+`/games/${game.id}/ads`)
+  const gameList = async () => {
+   await axios(API_URL+`/games/${game.id}/ads`)
     .then(response => setDuos(response.data))
   }
 
   const getDiscordUser = async (adsId: string) => {
-    await axios(API_URL+`/ads/${adsId}/discord`)
-    .then(response => setDiscordSelected(response.data.discord))
-    console.log( )
+
+     await axios(API_URL+`/ads/${adsId}/discord`)
+     .then(response => setDiscordSelected(response.data.discord));
+     console.log('DISCORD SELECIONADO => ',discordSelected);
   }
 
 	useEffect(() => {
      gameList();
-
+     
   },[])
   
   return (
@@ -64,7 +65,7 @@ export function Game () {
            title={game.title.trim()}
            subtitle='Conecte-se e comece a jogar'
           />
-        <FlatList
+         <FlatList
           data={duos}
           horizontal
           contentContainerStyle={[duos.length === 0 ? styles.containerListEmpty : styles.flatList]}
@@ -79,7 +80,7 @@ export function Game () {
           ListEmptyComponent={() => (
             <Text style={styles.emptyListText}>Não há anúncios publicados ainda.</Text>
           )}
-        />
+        /> 
         <DuoMatch
           discord={discordSelected}
           onClose={() => setDiscordSelected('')}

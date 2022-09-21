@@ -14,7 +14,7 @@ import './src/services/notificationConfigs';
 import {getPushNotificationToken } from './src/services/getPushNotificationToken'
 import { useRef, useEffect } from 'react';
 import { Subscription } from 'expo-modules-core';
- 
+import * as Notifications from "expo-notifications";
 
 function App() { 
   const getNotificationListener = useRef<Subscription>()
@@ -23,6 +23,20 @@ function App() {
   useEffect(() => {
     getPushNotificationToken();
   })
+
+  useEffect(()=>{
+    getNotificationListener.current = Notifications.addNotificationReceivedListener(notification => {console.log('add Notification => ',notification)})
+
+    responseNotificationListener.current = Notifications.addNotificationResponseReceivedListener(response => { console.log(' Response notification => ',response)})
+  
+    return () => {
+      if (getNotificationListener.current && responseNotificationListener.current){
+        Notifications.removeNotificationSubscription(getNotificationListener.current);
+        
+        Notifications.removeNotificationSubscription(responseNotificationListener.current);
+      }
+    }
+  },[])
 
   const [ fontsLoaded ] = useFonts({
     Inter_400Regular,
